@@ -33,7 +33,10 @@ gulp.task('copy',  function() {
   return gulp.src( source + './src/js/**/*.js')
     .pipe(gulp.dest( source + '/dist/js'))
 });
-
+gulp.task('copyPublic',  function() {
+  return gulp.src( source + './src/public/**/**')
+    .pipe(gulp.dest( source + '/dist/public'))
+});
 // js css压缩
 gulp.task('mincss', function() {
     gulp.src(dist+'css/**/*.css')
@@ -59,8 +62,8 @@ gulp.task('default', function() {
     }
   });
   gulp.watch(['./**/*.html', 'css/**/*.css', 'js/**/*.js'], {cwd: 'app'}, reload);
-  gulp.run('stylus','copy');
+  gulp.run('stylus', 'copy', 'copyPublic');
   gulp.watch('./src/stylus/**/*.styl', ['stylus']);  
   gulp.watch('./src/js/**/*.js', ['copy']);  
-
+  gulp.watch('./src/public/**/**', ['copyPublic']);  
 });
