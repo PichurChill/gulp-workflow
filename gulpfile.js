@@ -3,7 +3,8 @@ var gulp = require('gulp'),
     reload =   browserSync.reload;
     stylus = require('gulp-stylus'),
     mincss = require('gulp-mini-css'),
-    uglify = require('gulp-uglify');
+    uglify = require('gulp-uglify'),
+    autoprefixer = require('gulp-autoprefixer');
 // 资源路径
 var source = './app/',
     dist = './app/dist/';
@@ -20,6 +21,11 @@ gulp.task('stylus-min', function () {
 gulp.task('stylus', function () {
   return gulp.src( source + './src/stylus/**/*.styl')
     .pipe(stylus())
+    .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade: false
+        })
+    )
     .pipe(gulp.dest( source + '/dist/css'));
 });
 
