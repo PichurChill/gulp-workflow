@@ -5,46 +5,56 @@ var gulp = require('gulp'),
     mincss = require('gulp-mini-css'),
     uglify = require('gulp-uglify');
 // 资源路径
-var source = './app/';
-// 压缩
+var source = './app/',
+    dist = './app/dist/';
+
+// 压缩 stylus-css
 gulp.task('stylus-min', function () {
-  return gulp.src( source + '**/*.styl')
+  return gulp.src( source + './src/stylus/**/*.styl')
     .pipe(stylus({
       compress: true
     }))
     .pipe(gulp.dest( source + '/dist/css'));
 });
-// 不压缩
+// 不压缩 stylus-css
 gulp.task('stylus', function () {
-  return gulp.src( source + '**/*.styl')
+  return gulp.src( source + './src/stylus/**/*.styl')
     .pipe(stylus())
     .pipe(gulp.dest( source + '/dist/css'));
 });
 
+gulp.task('copy',  function() {
+  return gulp.src( source + './src/js/**/*.js')
+    .pipe(gulp.dest( source + '/dist/js'))
+});
+
 // js css压缩
 gulp.task('mincss', function() {
-    gulp.src(source+'src/**/*.css')
+    gulp.src(dist+'css/**/*.css')
           .pipe(mincss())
-          .pipe(gulp.dest(source + 'dist'));
+          .pipe(gulp.dest(source + 'dist/css'));
 });
 gulp.task('minjs', function() {
     gulp.src(source+'src/**/*.js')
           .pipe(uglify())
           .pipe(gulp.dest(source + 'dist'));
 });
+
+
 gulp.task('min',function(){
-    gulp.run('minjs');
+    gulp.run('minjs', 'mincss');
 });
 
 // 监视文件改动并重新载入
-gulp.task('serve', function() {
+gulp.task('default', function() {
   browserSync({
     server: {
       baseDir: 'app'
     }
   });
-
   gulp.watch(['./**/*.html', 'css/**/*.css', 'js/**/*.js'], {cwd: 'app'}, reload);
-  gulp.watch('./**/*.styl', ['stylus']);  
+  gulp.run('stylus','copy');
+  gulp.watch('./src/stylus/**/*.styl', ['stylus']);  
+  gulp.watch('./src/js/**/*.js', ['copy']);  
 
 });
