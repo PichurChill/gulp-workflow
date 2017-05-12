@@ -29,7 +29,7 @@ gulp.task('stylus', function () {
     .pipe(gulp.dest( source + '/dist/css'));
 });
 
-gulp.task('copy',  function() {
+gulp.task('copyJS',  function() {
   return gulp.src( source + './src/js/**/*.js')
     .pipe(gulp.dest( source + '/dist/js'))
 });
@@ -55,15 +55,16 @@ gulp.task('min',function(){
 });
 
 // 监视文件改动并重新载入
-gulp.task('default', function() {
+gulp.task('default', ['stylus', 'copyJS', 'copyPublic'],function() {
   browserSync({
     server: {
       baseDir: 'app'
     }
   });
-  gulp.watch(['./**/*.html', 'css/**/*.css', 'js/**/*.js'], {cwd: 'app'}, reload);
-  gulp.run('stylus', 'copy', 'copyPublic');
-  gulp.watch('./src/stylus/**/*.styl', ['stylus']);  
-  gulp.watch('./src/js/**/*.js', ['copy']);  
-  gulp.watch('./src/public/**/**', ['copyPublic']);  
+  // gulp.run('stylus', 'copyJS', 'copyPublic');
+  gulp.watch(['./**/*.html', './dist/**/*.css', './dist/**/*.js'], {cwd: 'app'}, reload);
+
+  gulp.watch(source + '/src/stylus/**/*.styl', ['stylus']);  
+  gulp.watch(source + '/src/js/**/*.js', ['copyJS']);
+  gulp.watch(source + '/src/public/**/**', ['copyPublic']);  
 });
