@@ -4,6 +4,7 @@ var gulp = require('gulp'),
     stylus = require('gulp-stylus'),
     mincss = require('gulp-mini-css'),
     uglify = require('gulp-uglify'),
+    clean = require('gulp-clean'),
     autoprefixer = require('gulp-autoprefixer');
 // 资源路径
 var source = './app/',
@@ -18,7 +19,7 @@ gulp.task('stylus-min', function () {
     .pipe(gulp.dest( source + '/dist/css'));
 });
 // 不压缩 stylus-css
-gulp.task('stylus', function () {
+gulp.task('stylus', ['clean'], function () {
   return gulp.src( source + './src/stylus/**/*.styl')
     .pipe(stylus())
     .pipe(autoprefixer({
@@ -29,11 +30,11 @@ gulp.task('stylus', function () {
     .pipe(gulp.dest( source + '/dist/css'));
 });
 
-gulp.task('copyJS',  function() {
+gulp.task('copyJS', ['clean'],  function() {
   return gulp.src( source + './src/js/**/*.js')
     .pipe(gulp.dest( source + '/dist/js'))
 });
-gulp.task('copyPublic',  function() {
+gulp.task('copyPublic', ['clean'],  function() {
   return gulp.src( source + './src/public/**/**')
     .pipe(gulp.dest( source + '/dist/public'))
 });
@@ -54,8 +55,15 @@ gulp.task('min',function(){
     gulp.run('minjs', 'mincss');
 });
 
+// 删除原先build的
+gulp.task('clean', function () {
+    return gulp.src(dist, {read: false})
+        .pipe(clean());
+});
+
+
 // 监视文件改动并重新载入
-gulp.task('default', ['stylus', 'copyJS', 'copyPublic'],function() {
+gulp.task('default', ['clean', 'stylus', 'copyJS', 'copyPublic'],function() {
   browserSync({
     server: {
       baseDir: 'app'
